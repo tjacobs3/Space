@@ -16,6 +16,7 @@ public class LevelGenerator : MonoBehaviour {
     private List<GameObject> rooms = new List<GameObject>();
     private bool allRoomsSeperated = false;
     private float lastStep = 0f;
+    private List<Edge<TreeNode<GameObject>>> roomConnections;
 
 	// Use this for initialization
 	void Start () {
@@ -37,6 +38,21 @@ public class LevelGenerator : MonoBehaviour {
             seperateRooms();
             if (allRoomsSeperated)
                 removeRoomsNotInBounds();
+        }
+
+        if (allRoomsSeperated)
+        {
+            if (roomConnections == null)
+            {
+                roomConnections = createGraph().createMST();
+            }
+            if (roomConnections != null)
+            {
+                foreach(Edge<TreeNode<GameObject>> e in roomConnections)
+                {
+                    Debug.DrawLine(e.a.data.transform.position, e.b.data.transform.position);
+                }
+            }
         }
 	}
 
@@ -114,6 +130,35 @@ public class LevelGenerator : MonoBehaviour {
                 Destroy(room.gameObject);
             return remove;
         });
+    }
+
+    Tree<GameObject> createGraph()
+    {
+        Tree<GameObject> t = new Tree<GameObject>();
+
+        foreach (GameObject room in rooms)
+        {
+            TreeNode<GameObject> n = new TreeNode<GameObject>(room);
+            t.nodes.Add(n);
+        }
+
+        foreach(TreeNode<GameObject> n in t.nodes) {
+            Collider[] hitColliders = Physics.OverlapSphere(n.data.transform.position, Mathf.Min(n.data.transform.localScale.x, n.data.transform.localScale.z) * 1.5f);
+            if (hitColliders.Length == 1)
+                continue;
+
+            foreach (Collider c in hitColliders)
+            {
+                if (c.gameObject != n.data )
+                {
+                    TreeNode<GameObject> foundNode = t.nodes.Find(tn => tn.data == c.gameObject);
+                    if (foundNode != null)
+                        n.neighbors.Add(foundNode);
+                }
+            }
+        }
+
+        return t;
     }
 
     Vector3 centerOfMass(Collider[] colliders)

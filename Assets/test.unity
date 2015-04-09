@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numRooms: 50
-  seed: 1419
+  seed: 1738
   minSize: {x: 4, y: 4}
   maxSize: {x: 14, y: 14}
   maxRatio: 3
