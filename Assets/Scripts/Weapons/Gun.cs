@@ -27,11 +27,13 @@ public class Gun : MonoBehaviour {
 	private float muzzleLightTime = 0f;
 	private float shellLiveTime = 2f;
     private bool isADS = false;
+    private IFireableGun fireMechanism;
 
 	// Use this for initialization
 	void Start () {
 		rounds = totalRounds;
 		recoil = gameObject.GetComponent<Recoil>();
+        fireMechanism = gameObject.GetComponent<IFireableGun>();
 		nextFire = Time.time;
 
 		if(muzzleLight != null) {
@@ -84,6 +86,11 @@ public class Gun : MonoBehaviour {
 			shellClone.AddTorque(VectorUtility.RandVector(shellRotation / 2, shellRotation), ForceMode.VelocityChange);
 			Destroy(shellClone.gameObject, shellLiveTime);
 		}
+
+        if (fireMechanism != null)
+        {
+            fireMechanism.Fire();
+        }
 
 		--rounds;
 	}
