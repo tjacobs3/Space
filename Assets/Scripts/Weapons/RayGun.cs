@@ -14,7 +14,7 @@ public class RayGun : MonoBehaviour, IFireableGun {
         if (Physics.Raycast(transform.position, fwd, out hit, range)) {
             if (hitSparks)
             {
-                ParticleSystem sparkClone = (ParticleSystem)Instantiate(hitSparks, hit.point, hit.transform.rotation);
+                ParticleSystem sparkClone = (ParticleSystem)Instantiate(hitSparks, hit.point, Quaternion.LookRotation(hit.normal));
                 Destroy(sparkClone.gameObject, sparkClone.duration);
             }
         }
