@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
+using System.Collections;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
@@ -41,6 +42,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
+
+        public void ShakeCamera(Vector3 vals)
+        {
+            StartCoroutine(Shake(vals.x, vals.y, vals.z));
+        }
 
         // Use this for initialization
         private void Start()
@@ -193,6 +199,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             else
             {
                 newCameraPosition = m_Camera.transform.localPosition;
+                newCameraPosition.x = m_OriginalCameraPosition.x;
                 newCameraPosition.y = m_OriginalCameraPosition.y - m_JumpBob.Offset();
             }
             m_Camera.transform.localPosition = newCameraPosition;
@@ -252,6 +259,30 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 return;
             }
             body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
+        }
+
+        IEnumerator Shake(float magnitude, float duration, float shakeSpeed)
+        {
+
+            float elapsed = 0.0f;
+
+            while (elapsed < duration)
+            {
+
+                elapsed += Time.deltaTime;
+
+                float percentComplete = elapsed / duration;
+                float damper = 1.0f - Mathf.Clamp(4.0f * percentComplete - 3.0f, 0.0f, 1.0f);
+
+                // map value to [-1, 1]
+                Vector3 newVal = SmoothRandom.GetVector3(shakeSpeed) - new Vector3(0.35f, 0.35f, 0.35f);
+                float x = newVal.x * damper * magnitude;
+                float y = newVal.y * damper * magnitude;
+
+                m_Camera.transform.localPosition = new Vector3(m_Camera.transform.localPosition.x + x, m_Camera.transform.localPosition.y + y, m_Camera.transform.localPosition.z);
+
+                yield return null;
+            }
         }
     }
 }

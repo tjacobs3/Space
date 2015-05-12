@@ -13,12 +13,17 @@ public class Gun : MonoBehaviour {
     public Transform model;
     public Transform adsPosition;
     public Transform hipPosition;
+    public Light light;
 
 	public Transform ejectionPort;
 	public Rigidbody shell;
 	public Vector3 shellVelocityMin;
 	public Vector3 shellVelocityMax;
 	public Vector3 shellRotation;
+
+    public float cameraShakeMagnitude = 0.2f;
+    public float cameraShakeDuration = 0.2f;
+    public float cameraShakeSpeed = 10f;
 
 	private int rounds = 0;
 	private Recoil recoil;
@@ -28,6 +33,7 @@ public class Gun : MonoBehaviour {
 	private float shellLiveTime = 2f;
     private bool isADS = false;
     private IFireableGun fireMechanism;
+    private CharacterController parentRigidBody;
 
 	// Use this for initialization
 	void Start () {
@@ -35,6 +41,7 @@ public class Gun : MonoBehaviour {
 		recoil = gameObject.GetComponent<Recoil>();
         fireMechanism = gameObject.GetComponent<IFireableGun>();
 		nextFire = Time.time;
+        parentRigidBody = findParentRigidBody();
 
 		if(muzzleLight != null) {
 			muzzleLight.enabled = false;
@@ -55,6 +62,11 @@ public class Gun : MonoBehaviour {
         if (Input.GetButtonDown("Fire2"))
         {
             ToggleADS();
+        }
+
+        if (Input.GetButtonDown("Toggle Light"))
+        {
+            ToggleLight();
         }
 
 		if(muzzleLight != null) {
@@ -84,6 +96,10 @@ public class Gun : MonoBehaviour {
 			shellClone.velocity = transform.TransformDirection(VectorUtility.RandVector(shellVelocityMin, shellVelocityMax));
 			Physics.IgnoreCollision( shellClone.GetComponent<Collider>(), transform.root.GetComponent<Collider>() );
 			shellClone.AddTorque(VectorUtility.RandVector(shellRotation / 2, shellRotation), ForceMode.VelocityChange);
+            if (parentRigidBody != null)
+            {
+                shellClone.velocity = shellClone.velocity + parentRigidBody.velocity;
+            }
 			Destroy(shellClone.gameObject, shellLiveTime);
 		}
 
@@ -92,6 +108,7 @@ public class Gun : MonoBehaviour {
             fireMechanism.Fire();
         }
 
+        SendMessageUpwards("ShakeCamera", new Vector3(cameraShakeMagnitude, cameraShakeDuration, cameraShakeSpeed));
 		--rounds;
 	}
 
@@ -106,6 +123,14 @@ public class Gun : MonoBehaviour {
         if (model != null && adsPosition != null && hipPosition != null)
         {
             StartCoroutine(ToggleModelPosition());
+        }
+    }
+
+    void ToggleLight()
+    {
+        if (light != null)
+        {
+            light.enabled = !light.enabled;
         }
     }
 
@@ -127,5 +152,17 @@ public class Gun : MonoBehaviour {
             }
             yield return null; 
         }
+    }
+
+    private CharacterController findParentRigidBody()
+    {
+        Transform o = transform.parent;
+        while (o != null)
+        {
+            CharacterController r = o.GetComponent<CharacterController>();
+            if (r != null) return r;
+            o = o.parent;
+        }
+        return null;
     }
 }
