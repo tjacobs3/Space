@@ -20,6 +20,7 @@ public class Gun : MonoBehaviour {
 	public Vector3 shellVelocityMin;
 	public Vector3 shellVelocityMax;
 	public Vector3 shellRotation;
+    public Inventory.AmmoType ammoType = Inventory.AmmoType.Pistol;
 
     public float cameraShakeMagnitude = 0.2f;
     public float cameraShakeDuration = 0.2f;
@@ -34,14 +35,16 @@ public class Gun : MonoBehaviour {
     private bool isADS = false;
     private IFireableGun fireMechanism;
     private CharacterController parentRigidBody;
+    private Inventory ammoSource;
 
 	// Use this for initialization
 	void Start () {
-		rounds = totalRounds;
 		recoil = gameObject.GetComponent<Recoil>();
         fireMechanism = gameObject.GetComponent<IFireableGun>();
+        ammoSource = transform.root.GetComponentInChildren<Inventory>();
 		nextFire = Time.time;
         parentRigidBody = findParentRigidBody();
+        reloadRounds();
 
 		if(muzzleLight != null) {
 			muzzleLight.enabled = false;
@@ -110,12 +113,18 @@ public class Gun : MonoBehaviour {
 
         SendMessageUpwards("ShakeCamera", new Vector3(cameraShakeMagnitude, cameraShakeDuration, cameraShakeSpeed));
 		--rounds;
+        ammoSource.useAmmo(ammoType);
 	}
 
 	void Reload() {
 		nextFire = Time.time + reloadTime;
-		rounds = totalRounds;
+        reloadRounds();
 	}
+
+    void reloadRounds()
+    {
+        rounds = Mathf.Min(totalRounds, ammoSource.totalAmmo(ammoType));
+    }
 
     void ToggleADS()
     {
