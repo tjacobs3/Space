@@ -42,6 +42,7 @@ public class Gun : MonoBehaviour {
 		recoil = gameObject.GetComponent<Recoil>();
         fireMechanism = gameObject.GetComponent<IFireableGun>();
         ammoSource = transform.root.GetComponentInChildren<Inventory>();
+        ammoSource.setEquippedWeapon(this);
 		nextFire = Time.time;
         parentRigidBody = findParentRigidBody();
         reloadRounds();
@@ -113,7 +114,6 @@ public class Gun : MonoBehaviour {
 
         SendMessageUpwards("ShakeCamera", new Vector3(cameraShakeMagnitude, cameraShakeDuration, cameraShakeSpeed));
 		--rounds;
-        ammoSource.useAmmo(ammoType);
 	}
 
 	void Reload() {
@@ -123,7 +123,14 @@ public class Gun : MonoBehaviour {
 
     void reloadRounds()
     {
-        rounds = Mathf.Min(totalRounds, ammoSource.totalAmmo(ammoType));
+        int roundsNeeded = Mathf.Min(totalRounds - rounds, ammoSource.totalAmmo(ammoType));
+        ammoSource.useAmmo(ammoType, roundsNeeded);
+        rounds = rounds + roundsNeeded;
+    }
+
+    public int getRounds()
+    {
+        return rounds;
     }
 
     void ToggleADS()
