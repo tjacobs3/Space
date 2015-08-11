@@ -7,8 +7,8 @@ public class Inventory : MonoBehaviour {
     public List<Gun> equippableWeapons = new List<Gun>();
     public Dictionary<AmmoType, int> ammo = new Dictionary<AmmoType, int>()
     {
-        {AmmoType.Pistol, 60},
-        {AmmoType.Rifle, 60}
+        {AmmoType.Pistol, 100},
+        {AmmoType.Rifle, 100}
     };
 
     private Gun currentEquippedWeapon;

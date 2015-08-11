@@ -24,7 +24,11 @@ public class Gun : MonoBehaviour {
 
     public float cameraShakeMagnitude = 0.2f;
     public float cameraShakeDuration = 0.2f;
-    public float cameraShakeSpeed = 10f;
+    public float cameraShakeSpeed = 1f;
+
+	public float cameraShakeMagnitudeADS = 0.05f;
+	public float cameraShakeDurationADS = 0.2f;
+	public float cameraShakeSpeedADS = 1f;
 
 	private int rounds = 0;
 	private Recoil recoil;
@@ -112,7 +116,11 @@ public class Gun : MonoBehaviour {
             fireMechanism.Fire();
         }
 
-        SendMessageUpwards("ShakeCamera", new Vector3(cameraShakeMagnitude, cameraShakeDuration, cameraShakeSpeed));
+		if (isADS) {
+			SendMessageUpwards ("ShakeCamera", new Vector3 (cameraShakeMagnitudeADS, cameraShakeDurationADS, cameraShakeSpeedADS));
+		} else {
+			SendMessageUpwards ("ShakeCamera", new Vector3 (cameraShakeMagnitude, cameraShakeDuration, cameraShakeSpeed));
+		}
 		--rounds;
 	}
 

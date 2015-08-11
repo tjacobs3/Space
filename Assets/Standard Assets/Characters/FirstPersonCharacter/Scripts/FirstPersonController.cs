@@ -60,7 +60,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_NextStep = m_StepCycle/2f;
             m_Jumping = false;
             m_AudioSource = GetComponent<AudioSource>();
-			m_MouseLook.Init(transform , m_Camera.transform);
+			m_MouseLook.Init(transform , m_Camera.transform.parent);
         }
 
 
@@ -134,7 +134,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
 
             ProgressStepCycle(speed);
-            UpdateCameraPosition(speed);
+            //UpdateCameraPosition(speed);
         }
 
 
@@ -241,7 +241,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void RotateView()
         {
-            m_MouseLook.LookRotation (transform, m_Camera.transform);
+            m_MouseLook.LookRotation (transform, m_Camera.transform.parent);
         }
 
 
@@ -265,21 +265,22 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
 
             float elapsed = 0.0f;
+            float xSeed = Random.Range(0, 1000);
+            float ySeed = Random.Range(0, 1000);
 
             while (elapsed < duration)
             {
-
+                
                 elapsed += Time.deltaTime;
 
                 float percentComplete = elapsed / duration;
                 float damper = 1.0f - Mathf.Clamp(4.0f * percentComplete - 3.0f, 0.0f, 1.0f);
 
                 // map value to [-1, 1]
-                Vector3 newVal = SmoothRandom.GetVector3(shakeSpeed) - new Vector3(0.35f, 0.35f, 0.35f);
-                float x = newVal.x * damper * magnitude;
-                float y = newVal.y * damper * magnitude;
+				float x = (Mathf.PerlinNoise(xSeed + (elapsed * shakeSpeed), 0.0f) - 0.5f) * magnitude * damper;
+				float y = (Mathf.PerlinNoise(ySeed + (elapsed * shakeSpeed), 0.0f) - 0.5f) * magnitude * damper;
 
-                m_Camera.transform.localPosition = new Vector3(m_Camera.transform.localPosition.x + x, m_Camera.transform.localPosition.y + y, m_Camera.transform.localPosition.z);
+				m_Camera.transform.localPosition = new Vector3(x, y, m_Camera.transform.localPosition.z);
 
                 yield return null;
             }

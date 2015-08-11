@@ -571,16 +571,32 @@ MonoBehaviour:
   shellVelocityMin: {x: 2.5, y: 3, z: 0}
   shellVelocityMax: {x: 3.5, y: 1.5, z: 0}
   shellRotation: {x: 1000, y: 1000, z: 0}
-  cameraShakeMagnitude: .200000003
+  ammoType: 0
+  cameraShakeMagnitude: .300000012
   cameraShakeDuration: .200000003
-  cameraShakeSpeed: 10
+  cameraShakeSpeed: 1
+  cameraShakeMagnitudeADS: .0500000007
+  cameraShakeDurationADS: .200000003
+  cameraShakeSpeedADS: 10
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: cameraShakeSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: cameraShakeMagnitudeADS
+      value: .0500000007
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: cameraShakeMagnitude
+      value: .300000012
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 168832}
