@@ -285,7 +285,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equippableWeapons:
   - {fileID: 11427296, guid: 84972974df6618f45862dd22bebbb8da, type: 2}
-  - {fileID: 11447108, guid: 01da03fbfdc26da4ca500fa582136f76, type: 2}
+  - {fileID: 11432978, guid: 01da03fbfdc26da4ca500fa582136f76, type: 2}
 --- !u!1 &574899847
 GameObject:
   m_ObjectHideFlags: 0
