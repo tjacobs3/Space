@@ -12,6 +12,7 @@ public class RayGun : MonoBehaviour, IFireableGun {
         Vector3 fwd = transform.TransformDirection(Vector3.forward);
         RaycastHit hit;
         if (Physics.Raycast(transform.position, fwd, out hit, range)) {
+			Debug.Log(hit.collider.gameObject.name);
             if (hitSparks)
             {
                 ParticleSystem sparkClone = (ParticleSystem)Instantiate(hitSparks, hit.point, Quaternion.LookRotation(hit.normal));

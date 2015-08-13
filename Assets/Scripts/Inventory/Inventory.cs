@@ -48,6 +48,11 @@ public class Inventory : MonoBehaviour {
         ammo[type] = ammo[type] - amount;
     }
 
+	public void addAmmo(AmmoType type, int amount)
+	{
+		ammo[type] = ammo[type] + amount;
+	}
+
     public int totalAmmo(AmmoType type)
     {
         return ammo[type];
