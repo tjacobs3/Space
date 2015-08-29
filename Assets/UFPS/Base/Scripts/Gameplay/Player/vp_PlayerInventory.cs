@@ -454,16 +454,6 @@ public class vp_PlayerInventory : vp_Inventory
 		if ((result == true && bank.IsInternal) )
 		{
 
-			try
-			{
-				TryWieldNewItem(bank.UnitType, (prevUnitCount != 0));
-			}
-			catch
-			{
-				// DEBUG: uncomment on elusive item wielding issues
-				//Debug.LogError("Error (" + this + ") Failed to wield new item.");
-			}
-
 			// --- auto reload firearms ---
 
 			if(!((Application.isPlaying) && WeaponHandler.CurrentWeaponIndex == 0))
